@@ -9,6 +9,7 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 8:
 import argparse
 import glob
 import re
+import os
 
 # Set template and output filenames
 makefile_input = "Makefile.in"
@@ -214,6 +215,8 @@ makefile_options["DEFS"] = (
     "-DSTR_MAX=280 -DTINYXYZ=1e-6 -DTINYREAL=1e-3 -DTINYFLD=1e-8 -DTINYWEI=1e-6 -DM_PI=3.141592653589793 -DVEC_LEN=16 "
 )
 makefile_options["ADD_INCLUDES"] = ""
+makefile_options["LINK_FLAGS"] = ""
+
 
 # specific cluster:
 specific_cluster = False
@@ -242,8 +245,10 @@ if args["cluster"] is not None:
 
 # compilation command
 if not args["nohdf5"]:
-    makefile_options["COMPILER_COMMAND"] += "h5pfc "
+    makefile_options["COMPILER_COMMAND"] += "mpif90 "
     makefile_options["PREPROCESSOR_FLAGS"] += "-DHDF5 "
+    makefile_options["LINK_FLAGS"] += f"-L{os.environ['HDF5_ROOT']}/lib -lhdf5_fortran -lhdf5 "
+
 else:
     makefile_options["COMPILER_COMMAND"] += (
         "mpif90 " if not args["flags"] == "intel" else "mpiifort "

@@ -8,6 +8,7 @@ USER_FILE = @USER_FILE@
 FC := @COMPILER_COMMAND@
 FFLAGS := @COMPILER_FLAGS@
 PFLAGS := @PREPROCESSOR_FLAGS@
+LINK_FLAGS = -L$(HDF5_ROOT)/lib -lhdf5_fortran -lhdf5
 WARNFLAGS := @WARNING_FLAGS@
 
 INC_DIRS := -I $(HDF5_ROOT)/include
@@ -47,7 +48,7 @@ depend Makefile.depend:
 $(EXECUTABLE): $(OBJ_FILES)
 	${HIDE}echo Linking $(EXECUTABLE)
 	${HIDE}mkdir -p $(@D)
-	${HIDE}$(FC) $(FFLAGS) $(PFLAGS) $(OBJ_FILES) -o $(EXECUTABLE)
+	${HIDE}$(FC) $(FFLAGS) $(PFLAGS) $(OBJ_FILES) -o $(EXECUTABLE) $(LINK_FLAGS)
 	${HIDE}echo [OK]: executable created at $(EXECUTABLE)
 
 
@@ -61,4 +62,6 @@ clean :
 	${HIDE}rm -f $(EXECUTABLE) $(OBJ_FILES)
 	${HIDE}rm -rf $(BIN_DIR) $(BUILD_DIR)
 	${HIDE}rm -f Makefile.depend
+	${HIDE}find . -name '*.mod' -delete
+
 
