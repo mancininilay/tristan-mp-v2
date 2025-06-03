@@ -245,9 +245,15 @@ if args["cluster"] is not None:
 
 # compilation command
 if not args["nohdf5"]:
-    makefile_options["COMPILER_COMMAND"] += "mpif90 "
+    # Use mpiifort for Intel flags, mpif90 otherwise
+    if args["flags"] == "intel":
+        makefile_options["COMPILER_COMMAND"] += "mpiifort "
+    else:
+        makefile_options["COMPILER_COMMAND"] += "mpif90 "
+    
     makefile_options["PREPROCESSOR_FLAGS"] += "-DHDF5 "
     makefile_options["LINK_FLAGS"] += f"-L{os.environ['HDF5_ROOT']}/lib -lhdf5_fortran -lhdf5 "
+
 
 else:
     makefile_options["COMPILER_COMMAND"] += (
